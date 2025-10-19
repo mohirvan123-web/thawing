@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thawing Reminder - Optimized Beep Alarm</title>
+    <title>Thawing Reminder - Persistent Alarm & Notifications</title>
     
     <style>
         /* ==================== 
-           CSS STYLING (Sama seperti sebelumnya)
+           CSS STYLING (Default/Desktop)
            ==================== */
         body {
             font-family: Arial, sans-serif;
@@ -16,8 +16,8 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            margin: 0; /* Ubah margin ke 0 untuk kontrol lebih baik */
-            padding: 20px 0; /* Tambahkan padding vertikal */
+            margin: 0; 
+            padding: 20px 0; 
         }
 
         .main-container {
@@ -28,7 +28,7 @@
             text-align: center;
             width: 100%;
             max-width: 800px;
-            box-sizing: border-box; /* Penting untuk responsif */
+            box-sizing: border-box; 
         }
 
         h1 {
@@ -36,9 +36,8 @@
             margin-bottom: 5px;
         }
 
-        /* --- Pengaturan Grid untuk Daftar Timer --- */
+        /* Grid default untuk Desktop/Tablet */
         .timer-list {
-            /* Nilai default untuk desktop/tablet */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -62,7 +61,6 @@
             font-size: 1.2em;
         }
 
-        /* Kontrol default (desktop: horizontal) */
         .timer-controls {
             display: flex;
             gap: 10px;
@@ -71,17 +69,16 @@
         }
         
         .timer-controls label {
-            white-space: nowrap; /* Mencegah label "Durasi" terpotong */
+            white-space: nowrap; 
         }
 
         .timer-controls input {
             padding: 8px;
-            /* Perluas input agar mengisi ruang yang tersedia */
             flex-grow: 1; 
-            max-width: 80px; /* Batasi lebar input di desktop */
+            max-width: 80px; 
             border: 1px solid #ccc;
             border-radius: 4px;
-            text-align: center; /* Perbaikan UX: Angka di tengah */
+            text-align: center; 
         }
 
         .timer-controls button {
@@ -90,7 +87,7 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
-            flex-grow: 1; /* Biarkan tombol memanjang di mobile */
+            flex-grow: 1; 
             white-space: nowrap;
         }
 
@@ -119,7 +116,7 @@
             letter-spacing: 1px;
         }
 
-        /* Warna Peringatan & Alarm (Tidak berubah) */
+        /* Warna Peringatan & Alarm */
         .timer-card.warning .countdown-display {
             background-color: #fff3cd; 
             color: #856404; 
@@ -158,58 +155,87 @@
         }
 
         /* ==================== 
-           MEDIA QUERY UNTUK MOBILE (Layar Kecil)
+           MEDIA QUERY UNTUK MOBILE (Layar Kecil) - TAMPILAN 2 BARIS RINGKAS
            ==================== */
         @media (max-width: 650px) {
             
             body {
-                padding: 10px 0;
+                padding: 10px; 
             }
 
             .main-container {
-                padding: 15px; /* Kurangi padding utama di mobile */
-                border-radius: 0; /* Opsional: Hilangkan border-radius di layar penuh mobile */
-                box-shadow: none; /* Opsional: Hilangkan shadow */
+                padding: 15px;
+                box-shadow: none; 
             }
 
-            /* Di layar kecil, paksa grid menjadi satu kolom (Full Width Card) */
+            /* 1. Atur Teks Utama Lebih Kecil */
+            h1 {
+                font-size: 1.5em; 
+            }
+            p {
+                font-size: 0.9em; 
+            }
+
+            /* 2. Grid menjadi 2 Kolom yang Ringkas */
             .timer-list {
-                grid-template-columns: 1fr;
-                gap: 15px;
+                grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); 
+                gap: 10px; 
             }
             
-            /* Tata Letak Kontrol di Mobile: Tumpuk Vertikal */
-            .timer-controls {
-                flex-direction: column; /* Tumpuk semua elemen vertikal */
-                align-items: stretch; /* Regangkan elemen agar lebar penuh */
-                gap: 8px;
+            .timer-card {
+                padding: 10px; 
             }
 
-            /* Atur tata letak input dan label secara berdampingan */
-            .timer-controls > :is(label, input) {
-                /* Buat input dan label dalam baris terpisah */
-                display: flex; 
-                justify-content: space-between;
-                align-items: center;
-                width: 100%;
+            .timer-card h2 {
+                font-size: 1.0em; 
+                padding-bottom: 5px;
+            }
+
+            /* 3. Tampilan Countdown Lebih Ringkas */
+            .countdown-display {
+                font-size: 1.5em; 
+                margin: 10px 0;
+                padding: 5px;
+            }
+
+            /* 4. Kontrol Dibuat Horizontal Ringkas */
+            .timer-controls {
+                flex-direction: row; 
+                flex-wrap: wrap; 
+                justify-content: space-between; 
+                gap: 5px; 
             }
             
+            .timer-controls label {
+                font-size: 0.8em; 
+                order: 1;
+            }
+
             .timer-controls input {
-                max-width: 100px; /* Lebar input yang lebih wajar */
-                text-align: right;
+                padding: 4px; 
+                max-width: 40px; 
+                order: 2;
             }
 
             .timer-controls button {
-                width: 100%; /* Tombol lebar penuh */
+                padding: 5px 8px;
+                font-size: 0.75em;
+                flex-basis: 0; 
+                flex-grow: 1; 
+                order: 3;
+            }
+
+            .alarm-message {
+                font-size: 0.7em;
+                padding: 5px;
             }
         }
-
     </style>
 </head>
 <body>
     <div class="main-container">
-        <h1>Timer Thawing Reminder 🧊 (Caaaaiirrr)</h1>
-        <p>JANGAN SAMPAI THAWING MELEBIHI WAKTU YANG DTENTUKAN.</p>
+        <h1>Timer Thawing Reminder 🧊</h1>
+        <p>Atur dan pantau waktu Thawing untuk berbagai bahan secara bersamaan.</p>
 
         <div class="timer-list" id="timer-list">
             </div>
@@ -217,10 +243,9 @@
 
     <script>
         /* ==================== 
-           JAVASCRIPT LOGIC (Tidak ada perubahan)
+           JAVASCRIPT LOGIC (Integrasi LocalStorage & Notifikasi)
            ==================== */
         
-        // Data Bahan Thawing
         const THAWING_ITEMS = [
             { id: 1, name: "ADONAN", defaultTimeMinutes: 40 },
             { id: 2, name: "ACIN", defaultTimeMinutes: 60 },
@@ -228,68 +253,70 @@
             { id: 4, name: "PENTOL", defaultTimeMinutes: 120 },
             { id: 5, name: "SURAI NAGA", defaultTimeMinutes: 120 },
             { id: 6, name: "KRUPUK MIE", defaultTimeMinutes: 120 },
-  { id: 7, name: "KULIT PANGSIT", defaultTimeMinutes: 120 },
         ];
 
         const timerListContainer = document.getElementById('timer-list');
         
-        // Konstanta untuk optimalisasi dan keterbacaan
         const WARNING_TIME_SECONDS = 15 * 60; // 15 menit dalam detik
         const CLASS_WARNING = 'warning';
         const CLASS_ALERT = 'alert';
         const DISPLAY_NONE = 'none';
         const DISPLAY_BLOCK = 'block';
         
-        // Mengganti activeIntervals menjadi penyimpan ID Timeout
         let activeIntervals = {}; 
-        
-        // Inisialisasi AudioContext untuk Beep Tone
         let audioCtx;
+        
+        const STORAGE_KEY = 'thawingTimerStatus_'; 
+        
+        let notificationPermission = Notification.permission; 
 
-        // Fungsi untuk membuat suara "beep" sederhana menggunakan AudioContext
+        // Fungsi untuk membuat suara "beep" yang lebih keras (gainNode.gain.value = 2.0)
         function playBeep(frequency, durationMs) {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            try {
+                if (!audioCtx) {
+                    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                
+                const oscillator = audioCtx.createOscillator();
+                const gainNode = audioCtx.createGain();
+
+                gainNode.gain.value = 2.0; 
+
+                oscillator.connect(gainNode);
+                gainNode.connect(audioCtx.destination);
+
+                oscillator.type = 'square';
+                oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+
+                oscillator.start();
+                
+                gainNode.gain.exponentialRampToValueAtTime(
+                    0.00001, audioCtx.currentTime + durationMs / 1000
+                );
+                oscillator.stop(audioCtx.currentTime + durationMs / 1000);
+            } catch (e) {
+                console.error("Error playing beep:", e);
             }
-            
-            const oscillator = audioCtx.createOscillator();
-            const gainNode = audioCtx.createGain();
-
-            oscillator.connect(gainNode);
-            gainNode.connect(audioCtx.destination);
-
-            oscillator.type = 'square';
-            oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
-
-            oscillator.start();
-            
-            gainNode.gain.exponentialRampToValueAtTime(
-                0.00001, audioCtx.currentTime + durationMs / 1000
-            );
-            oscillator.stop(audioCtx.currentTime + durationMs / 1000);
         }
 
-        // Fungsi umum untuk memainkan alarm (memanggil Beep)
-        function playAlarm(times = 1) {
+        // Fungsi untuk memainkan alarm yang lebih lama (8 beeps @ 400ms)
+        function playAlarm(times = 8) { 
             let count = 0;
             const interval = setInterval(() => {
-                playBeep(440, 200); 
+                playBeep(440, 400); 
                 count++;
                 if (count >= times) {
                     clearInterval(interval);
                 }
-            }, 300); 
+            }, 500); 
         }
         
-        // PENTING: Perlu interaksi pengguna untuk mengaktifkan AudioContext
         function resumeAudioContext() {
              if (audioCtx && audioCtx.state === 'suspended') {
                  audioCtx.resume();
              }
         }
 
-
-        // Fungsi untuk memformat total detik menjadi HH:MM:SS
         function formatTime(totalSeconds) {
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -302,57 +329,88 @@
             return `${h}:${m}:${s}`;
         }
         
-        // Fungsi REKURSIF inti untuk menjalankan countdown
-        function tick(itemId, duration) {
+        // Fungsi untuk menampilkan notifikasi pop-up (Ikon eksternal dihapus)
+        function sendNotification(title, body) {
+            if (notificationPermission === 'granted') {
+                try {
+                    new Notification(title, {
+                        body: body,
+                        // Ikon eksternal dihapus untuk menghindari error CORS/blokir browser.
+                        // Anda bisa menggantinya dengan ikon base64 atau menghapusnya
+                        renotify: true, 
+                        tag: 'thawing-alarm' 
+                    });
+                } catch (e) {
+                    console.error("Error sending notification:", e);
+                }
+            }
+        }
+
+
+        // Fungsi REKURSIF inti (tick)
+        function tick(itemId, endTimeMs) {
+            
             const timerCard = document.getElementById(`card-${itemId}`);
+            if (!timerCard) return; 
+            
             const display = document.getElementById(`display-${itemId}`);
             const alarmMessage = document.getElementById(`msg-${itemId}`);
             const itemName = timerCard.querySelector('h2').textContent;
             
-            duration--;
+            const now = Date.now();
+            let duration = Math.floor((endTimeMs - now) / 1000); 
             
-            // --- Logika Update & Alarm ---
-            
-            // 1. Update tampilan di setiap tick
-            display.textContent = formatTime(duration);
-            
+            clearTimeout(activeIntervals[itemId]);
+
+            // 1. Update tampilan
+            if (duration >= 0) {
+                 display.textContent = formatTime(duration);
+            }
+           
             // 2. Transisi ke mode WARNING
-            if (duration <= WARNING_TIME_SECONDS && duration > 0 && !timerCard.classList.contains(CLASS_WARNING)) {
-                timerCard.classList.add(CLASS_WARNING);
-                timerCard.classList.remove(CLASS_ALERT); // Pastikan alert dihapus
-                const remainingMinutes = Math.ceil(duration / 60);
-                alarmMessage.textContent = `🔔 PERINGATAN! ${itemName} tersisa ${remainingMinutes} menit!`;
-                alarmMessage.style.display = DISPLAY_BLOCK;
+            if (duration <= WARNING_TIME_SECONDS && duration > 0) {
+                if (!timerCard.classList.contains(CLASS_WARNING)) {
+                    timerCard.classList.add(CLASS_WARNING);
+                    timerCard.classList.remove(CLASS_ALERT); 
+                    const remainingMinutes = Math.ceil(duration / 60);
+                    alarmMessage.textContent = `🔔 PERINGATAN! ${itemName} tersisa ${remainingMinutes} menit!`;
+                    alarmMessage.style.display = DISPLAY_BLOCK;
+                }
+            } else if (duration > WARNING_TIME_SECONDS) {
+                 timerCard.classList.remove(CLASS_WARNING);
+                 alarmMessage.style.display = DISPLAY_NONE;
             }
 
             // 3. Bunyikan alarm di mode WARNING (setiap 30 detik)
             if (duration <= WARNING_TIME_SECONDS && duration > 0 && duration % 30 === 0) {
-                playAlarm(1);
+                playAlarm(1); 
             }
             
-            // 4. Kondisi Waktu Habis:
+            // 4. Kondisi Waktu Habis: (Logic utama notifikasi dan alarm)
             if (duration <= 0) {
-                // Hentikan timer dengan menghapus ID timeout dari penyimpanan
-                clearTimeout(activeIntervals[itemId]);
                 delete activeIntervals[itemId];
+                localStorage.removeItem(STORAGE_KEY + itemId); 
                 
                 display.textContent = "00:00:00";
                 timerCard.classList.remove(CLASS_WARNING);
                 timerCard.classList.add(CLASS_ALERT); 
                 alarmMessage.textContent = `✅ WAKTU ${itemName} SELESAI! Segera Ambil Bahan.`;
                 alarmMessage.style.display = DISPLAY_BLOCK;
-                playAlarm(5); // Bunyikan 5 kali untuk penekanan
+                
+                // AKSI ALARM DAN NOTIFIKASI POP-UP
+                sendNotification("WAKTU THAWING HABIS!", `Segera ambil bahan: ${itemName}.`);
+                playAlarm(8); 
                 
                 // Reset UI kontrol
                 const inputTime = document.getElementById(`time-input-${itemId}`);
                 document.getElementById(`start-btn-${itemId}`).style.display = DISPLAY_BLOCK;
                 document.getElementById(`reset-btn-${itemId}`).style.display = DISPLAY_NONE;
                 inputTime.readOnly = false;
-                return; // Hentikan rekursi
+                return; 
             }
             
-            // 5. Jadwalkan tick berikutnya (recursively call setTimeout)
-            activeIntervals[itemId] = setTimeout(() => tick(itemId, duration), 1000);
+            // 5. Jadwalkan tick berikutnya
+            activeIntervals[itemId] = setTimeout(() => tick(itemId, endTimeMs), 1000);
         }
 
 
@@ -360,53 +418,57 @@
         function startCountdown(itemId) {
             resumeAudioContext(); 
             
+            // Minta Izin Notifikasi Pop-up (dipicu oleh interaksi user)
+            Notification.requestPermission().then(permission => {
+                notificationPermission = permission; 
+            });
+            
             const timerCard = document.getElementById(`card-${itemId}`);
             const inputTime = document.getElementById(`time-input-${itemId}`);
+            
+            if (!timerCard || !inputTime) {
+                console.error(`DOM Error: Card or Input element not found for ID ${itemId}`);
+                return; 
+            }
+            
             const itemName = timerCard.querySelector('h2').textContent;
-
-            // --- Peningkatan UX: Konfirmasi Restart ---
+            
             if (activeIntervals[itemId]) {
                 const confirmRestart = confirm(`Timer untuk ${itemName} sedang berjalan. Apakah Anda ingin menghentikannya dan MEMULAI ULANG dengan waktu yang baru?`);
-                
-                if (!confirmRestart) {
-                    return; 
-                }
-                // Jika Ya, hentikan timer yang lama
+                if (!confirmRestart) return; 
                 clearTimeout(activeIntervals[itemId]);
                 delete activeIntervals[itemId];
+                localStorage.removeItem(STORAGE_KEY + itemId); 
             }
-            // ------------------------------------------
 
-            const display = document.getElementById(`display-${itemId}`);
-            const alarmMessage = document.getElementById(`msg-${itemId}`);
-            const startButton = document.getElementById(`start-btn-${itemId}`);
-            const resetButton = document.getElementById(`reset-btn-${itemId}`);
-            
-            let duration = parseInt(inputTime.value) * 60; 
-            
-            if (isNaN(duration) || duration <= 0) {
+            const durationMinutes = parseInt(inputTime.value);
+            if (isNaN(durationMinutes) || durationMinutes <= 0) {
                 alert(`Mohon masukkan waktu thawing yang valid untuk ${itemName}.`);
                 return;
             }
             
-            // Perubahan UI saat timer dimulai
-            startButton.style.display = DISPLAY_NONE;
-            resetButton.style.display = DISPLAY_BLOCK;
+            // LOGIKA PENYIMPANAN STATE BARU
+            const durationMs = durationMinutes * 60 * 1000;
+            const endTimeMs = Date.now() + durationMs; 
+            localStorage.setItem(STORAGE_KEY + itemId, endTimeMs);
+            
+            // Perubahan UI
+            document.getElementById(`start-btn-${itemId}`).style.display = DISPLAY_NONE;
+            document.getElementById(`reset-btn-${itemId}`).style.display = DISPLAY_BLOCK;
             inputTime.readOnly = true;
             timerCard.classList.remove(CLASS_ALERT, CLASS_WARNING);
-            display.textContent = formatTime(duration);
-            alarmMessage.style.display = DISPLAY_NONE;
+            document.getElementById(`msg-${itemId}`).style.display = DISPLAY_NONE;
 
-
-            // Jalankan tick pertama. Fungsi tick akan menjadwalkan dirinya sendiri.
-            activeIntervals[itemId] = setTimeout(() => tick(itemId, duration), 1000);
+            // Jalankan tick
+            tick(itemId, endTimeMs);
         }
 
         // Fungsi reset
         function resetTimer(itemId) {
-            // Hentikan timer (menggunakan clearTimeout karena kita menggunakan setTimeout)
             clearTimeout(activeIntervals[itemId]);
             delete activeIntervals[itemId];
+            
+            localStorage.removeItem(STORAGE_KEY + itemId); 
 
             const item = THAWING_ITEMS.find(i => i.id === itemId);
 
@@ -417,56 +479,84 @@
             const startButton = document.getElementById(`start-btn-${itemId}`);
             const resetButton = document.getElementById(`reset-btn-${itemId}`);
             
+            if (!timerCard || !inputTime || !display) return; // Safeguard
+
             timerCard.classList.remove(CLASS_ALERT, CLASS_WARNING);
             inputTime.readOnly = false;
             startButton.style.display = DISPLAY_BLOCK;
             resetButton.style.display = DISPLAY_NONE;
             alarmMessage.style.display = DISPLAY_NONE;
 
-            // Atur ulang nilai input dan tampilan ke waktu default
             inputTime.value = item.defaultTimeMinutes;
             display.textContent = formatTime(item.defaultTimeMinutes * 60);
 
-            // Fokus ke input setelah reset untuk UX yang lebih cepat
             inputTime.focus();
         }
 
 
         // Fungsi untuk membuat dan menambahkan elemen HTML timer
         function createTimerCard(item) {
-            const card = document.createElement('div');
-            card.className = 'timer-card';
-            card.id = `card-${item.id}`;
-            
-            card.innerHTML = `
-                <h2>${item.name}</h2>
-                <div id="display-${item.id}" class="countdown-display">
-                    ${formatTime(item.defaultTimeMinutes * 60)}
-                </div>
+            try {
+                const card = document.createElement('div');
+                card.className = 'timer-card';
+                card.id = `card-${item.id}`;
                 
-                <div id="msg-${item.id}" class="alarm-message"></div>
+                const savedEndTime = localStorage.getItem(STORAGE_KEY + item.id);
+                let initialDisplayTime;
+                let isRunning = false;
 
-                <div class="timer-controls">
-                    <label>Durasi (mnt):</label>
-                    <input type="number" id="time-input-${item.id}" value="${item.defaultTimeMinutes}" min="1" max="180">
-                    <button id="start-btn-${item.id}" class="start-btn">START</button>
-                    <button id="reset-btn-${item.id}" class="reset-btn" style="display: none;">RESET</button>
-                </div>
-            `;
-            
-            timerListContainer.appendChild(card);
-            
-            // Tambahkan Event Listener
-            document.getElementById(`start-btn-${item.id}`).addEventListener('click', () => startCountdown(item.id));
-            document.getElementById(`reset-btn-${item.id}`).addEventListener('click', () => resetTimer(item.id));
+                if (savedEndTime) {
+                    const remainingMs = parseInt(savedEndTime) - Date.now();
+                    if (remainingMs > 1000) { 
+                        initialDisplayTime = formatTime(Math.ceil(remainingMs / 1000));
+                        isRunning = true;
+                    } else {
+                        localStorage.removeItem(STORAGE_KEY + item.id);
+                        initialDisplayTime = formatTime(item.defaultTimeMinutes * 60);
+                    }
+                } else {
+                    initialDisplayTime = formatTime(item.defaultTimeMinutes * 60);
+                }
+                
+                card.innerHTML = `
+                    <h2>${item.name}</h2>
+                    <div id="display-${item.id}" class="countdown-display">
+                        ${initialDisplayTime}
+                    </div>
+                    
+                    <div id="msg-${item.id}" class="alarm-message"></div>
 
-            // --- Peningkatan UX: Update tampilan real-time saat input berubah ---
-            document.getElementById(`time-input-${item.id}`).addEventListener('input', (event) => {
-                const minutes = parseInt(event.target.value) || 0;
-                const display = document.getElementById(`display-${item.id}`);
-                display.textContent = formatTime(minutes * 60);
-            });
-            // -------------------------------------------------------------------
+                    <div class="timer-controls">
+                        <label>Durasi (mnt):</label>
+                        <input type="number" id="time-input-${item.id}" value="${item.defaultTimeMinutes}" min="1" max="180" ${isRunning ? 'readonly' : ''}>
+                        <button id="start-btn-${item.id}" class="start-btn" style="display: ${isRunning ? DISPLAY_NONE : DISPLAY_BLOCK};">START</button>
+                        <button id="reset-btn-${item.id}" class="reset-btn" style="display: ${isRunning ? DISPLAY_BLOCK : DISPLAY_NONE};">RESET</button>
+                    </div>
+                `;
+                
+                timerListContainer.appendChild(card);
+                
+                // Tambahkan Event Listener
+                document.getElementById(`start-btn-${item.id}`).addEventListener('click', () => startCountdown(item.id));
+                document.getElementById(`reset-btn-${item.id}`).addEventListener('click', () => resetTimer(item.id));
+
+                document.getElementById(`time-input-${item.id}`).addEventListener('input', (event) => {
+                    if (!document.getElementById(`time-input-${item.id}`).readOnly) {
+                        const minutes = parseInt(event.target.value) || 0;
+                        const display = document.getElementById(`display-${item.id}`);
+                        display.textContent = formatTime(minutes * 60);
+                    }
+                });
+
+                // 2. Jika timer berjalan, jalankan kembali tick
+                if (isRunning) {
+                    setTimeout(() => {
+                        tick(item.id, parseInt(savedEndTime));
+                    }, 50); 
+                }
+            } catch (e) {
+                console.error(`Error creating card for item ${item.id}:`, e);
+            }
         }
 
 
@@ -475,6 +565,7 @@
             THAWING_ITEMS.forEach(item => {
                 createTimerCard(item);
             });
+            notificationPermission = Notification.permission;
         });
     </script>
 </body>
