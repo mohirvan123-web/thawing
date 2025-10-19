@@ -208,8 +208,8 @@
 </head>
 <body>
     <div class="main-container">
-        <h1>Timer Thawing Reminder 🧊</h1>
-        <p>Atur dan pantau waktu Thawing untuk berbagai bahan secara bersamaan.</p>
+        <h1>Timer Thawing Reminder 🧊 (Caaaaiirrr)</h1>
+        <p>JANGAN SAMPAI THAWING MELEBIHI WAKTU YANG DTENTUKAN.</p>
 
         <div class="timer-list" id="timer-list">
             </div>
