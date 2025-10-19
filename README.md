@@ -16,7 +16,8 @@
             justify-content: center;
             align-items: flex-start;
             min-height: 100vh;
-            margin: 20px;
+            margin: 0; /* Ubah margin ke 0 untuk kontrol lebih baik */
+            padding: 20px 0; /* Tambahkan padding vertikal */
         }
 
         .main-container {
@@ -27,6 +28,7 @@
             text-align: center;
             width: 100%;
             max-width: 800px;
+            box-sizing: border-box; /* Penting untuk responsif */
         }
 
         h1 {
@@ -34,7 +36,9 @@
             margin-bottom: 5px;
         }
 
+        /* --- Pengaturan Grid untuk Daftar Timer --- */
         .timer-list {
+            /* Nilai default untuk desktop/tablet */
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 20px;
@@ -58,6 +62,7 @@
             font-size: 1.2em;
         }
 
+        /* Kontrol default (desktop: horizontal) */
         .timer-controls {
             display: flex;
             gap: 10px;
@@ -65,11 +70,18 @@
             align-items: center;
         }
         
+        .timer-controls label {
+            white-space: nowrap; /* Mencegah label "Durasi" terpotong */
+        }
+
         .timer-controls input {
             padding: 8px;
-            width: 80px;
+            /* Perluas input agar mengisi ruang yang tersedia */
+            flex-grow: 1; 
+            max-width: 80px; /* Batasi lebar input di desktop */
             border: 1px solid #ccc;
             border-radius: 4px;
+            text-align: center; /* Perbaikan UX: Angka di tengah */
         }
 
         .timer-controls button {
@@ -78,6 +90,8 @@
             border-radius: 4px;
             cursor: pointer;
             font-weight: bold;
+            flex-grow: 1; /* Biarkan tombol memanjang di mobile */
+            white-space: nowrap;
         }
 
         .start-btn {
@@ -105,7 +119,7 @@
             letter-spacing: 1px;
         }
 
-        /* Warna Peringatan */
+        /* Warna Peringatan & Alarm (Tidak berubah) */
         .timer-card.warning .countdown-display {
             background-color: #fff3cd; 
             color: #856404; 
@@ -116,7 +130,6 @@
             box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
         }
 
-        /* Warna Alarm (Waktu Habis) */
         .timer-card.alert .countdown-display {
             background-color: #f8d7da; 
             color: #721c24; 
@@ -139,11 +152,58 @@
             display: none;
         }
 
-        /* Animasi Kedip untuk Peringatan */
         @keyframes flash {
             from { opacity: 1; }
             to { opacity: 0.5; }
         }
+
+        /* ==================== 
+           MEDIA QUERY UNTUK MOBILE (Layar Kecil)
+           ==================== */
+        @media (max-width: 650px) {
+            
+            body {
+                padding: 10px 0;
+            }
+
+            .main-container {
+                padding: 15px; /* Kurangi padding utama di mobile */
+                border-radius: 0; /* Opsional: Hilangkan border-radius di layar penuh mobile */
+                box-shadow: none; /* Opsional: Hilangkan shadow */
+            }
+
+            /* Di layar kecil, paksa grid menjadi satu kolom (Full Width Card) */
+            .timer-list {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            /* Tata Letak Kontrol di Mobile: Tumpuk Vertikal */
+            .timer-controls {
+                flex-direction: column; /* Tumpuk semua elemen vertikal */
+                align-items: stretch; /* Regangkan elemen agar lebar penuh */
+                gap: 8px;
+            }
+
+            /* Atur tata letak input dan label secara berdampingan */
+            .timer-controls > :is(label, input) {
+                /* Buat input dan label dalam baris terpisah */
+                display: flex; 
+                justify-content: space-between;
+                align-items: center;
+                width: 100%;
+            }
+            
+            .timer-controls input {
+                max-width: 100px; /* Lebar input yang lebih wajar */
+                text-align: right;
+            }
+
+            .timer-controls button {
+                width: 100%; /* Tombol lebar penuh */
+            }
+        }
+
     </style>
 </head>
 <body>
@@ -157,7 +217,7 @@
 
     <script>
         /* ==================== 
-           JAVASCRIPT LOGIC (Optimized)
+           JAVASCRIPT LOGIC (Tidak ada perubahan)
            ==================== */
         
         // Data Bahan Thawing
@@ -168,6 +228,7 @@
             { id: 4, name: "PENTOL", defaultTimeMinutes: 120 },
             { id: 5, name: "SURAI NAGA", defaultTimeMinutes: 120 },
             { id: 6, name: "KRUPUK MIE", defaultTimeMinutes: 120 },
+  { id: 7, name: "KULIT PANGSIT", defaultTimeMinutes: 120 },
         ];
 
         const timerListContainer = document.getElementById('timer-list');
