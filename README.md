@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thawing Reminder - Alarm Agresif & Persistent (Shared)</title>
+    <title>Thawing Reminder - Alarm Agresif & Persistent (MLGJAK)</title>
     
     <style>
         /* ==================== 
@@ -159,19 +159,20 @@
     </div>
 
     <script>
-        // ===================================
-        // FIREBASE CONFIGURATION (WAJIB DIGANTI)
-        // ===================================
-        const firebaseConfig = {
-          apiKey: "AIzaSyBtUlghTw806GuGuwOXGNgoqN6Rkcg0IMM",
+       // ===================================
+// FIREBASE CONFIGURATION (SUDAH DIPERBAIKI)
+// ===================================
+const firebaseConfig = {
+  apiKey: "AIzaSyBtUlghTw806GuGuwOXGNgoqN6Rkcg0IMM",
   authDomain: "thawing-ec583.firebaseapp.com",
   databaseURL: "https://thawing-ec583-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "thawing-ec583",
-  storageBucket: "thawing-ec583.firebasestorage.app"
+  storageBucket: "thawing-ec583.firebasestorage.app", // Pastikan ada koma
   messagingSenderId: "1043079332713",
   appId: "1:1043079332713:web:6d289ad2b7c13a222bb3f8",
   measurementId: "G-WLBFJ6V7QT"            
 };
+
 
         // Initialize Firebase (PENTING: Hanya panggil sekali)
         try {
