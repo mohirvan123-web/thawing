@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thawing Reminder - Alarm Agresif & Persistent</title>
+    <title>Thawing Reminder - Alarm Agresif & Persistent (Shared)</title>
     
     <style>
         /* ==================== 
-           CSS: STYLING & RESPONSIVITAS 
+           CSS: STYLING & RESPONSIVITAS (Dibiarkan sama)
            ==================== */
         body {
             font-family: Arial, sans-serif;
@@ -18,7 +18,7 @@
             display: flex;
             justify-content: center;
             align-items: flex-start;
-            transition: background-color 0.2s; /* Untuk Flash Alarm */
+            transition: background-color 0.2s; 
         }
 
         .main-container {
@@ -32,7 +32,6 @@
             box-sizing: border-box; 
         }
 
-        /* Grid default untuk Desktop/Tablet */
         .timer-list {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -120,7 +119,7 @@
         
         /* ALARM GLOBAL AGRESIF (Flash Body) */
         .flash-alarm-red {
-            background-color: #ff0000 !important; /* Merah menyala */
+            background-color: #ff0000 !important; 
             transition: background-color 0.2s; 
         }
 
@@ -135,31 +134,70 @@
             body { padding: 10px 0; }
             .main-container { padding: 15px; box-shadow: none; }
             h1 { font-size: 1.5em; }
-            .timer-list { grid-template-columns: 1fr; gap: 10px; } /* Single column di mobile */
+            .timer-list { grid-template-columns: 1fr; gap: 10px; } 
             .timer-card { padding: 10px; }
             .timer-card h2 { font-size: 1.1em; }
             .countdown-display { font-size: 1.8em; margin: 10px 0; padding: 8px; }
             
-            /* Kontrol Ramping untuk Mobile */
             .timer-controls { flex-wrap: wrap; justify-content: space-between; gap: 5px; }
             .timer-controls label { font-size: 0.9em; flex-basis: 100%; text-align: left;}
             .timer-controls input { padding: 6px; max-width: 60px; }
             .timer-controls button { padding: 8px 10px; font-size: 0.85em; flex-basis: calc(50% - 5px); }
         }
     </style>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
 </head>
 <body>
     <div class="main-container">
-        <h1>Timer Thawing Reminder 🧊</h1>
-        <p>A.</p>
+        <h1>Timer Thawing Reminder 🧊 (SHARED)</h1>
+        <p>Status timer dibagikan dan disinkronkan secara real-time ke semua perangkat.</p>
         
         <div class="timer-list" id="timer-list">
-        </div>
+            </div>
     </div>
 
     <script>
+        // ===================================
+        // FIREBASE CONFIGURATION (WAJIB DIGANTI)
+        // ===================================
+        const firebaseConfig = {
+           // Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyBtUlghTw806GuGuwOXGNgoqN6Rkcg0IMM",
+  authDomain: "thawing-ec583.firebaseapp.com",
+  projectId: "thawing-ec583",
+  storageBucket: "thawing-ec583.firebasestorage.app",
+  messagingSenderId: "1043079332713",
+  appId: "1:1043079332713:web:6d289ad2b7c13a222bb3f8",
+  measurementId: "G-WLBFJ6V7QT"
+};
+
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
+        };
+
+        // Initialize Firebase (PENTING: Hanya panggil sekali)
+        try {
+            firebase.initializeApp(firebaseConfig);
+        } catch (e) {
+            console.error("Firebase Initialization Failed. Check your config.", e);
+        }
+        
+        // Dapatkan referensi database
+        const dbRef = firebase.database().ref('thawingTimers');
+        
         /* ==================== 
-           JAVASCRIPT LOGIC (Gabungan & Optimalisasi)
+           JAVASCRIPT LOGIC 
            ==================== */
         
         // --- KONFIGURASI APLIKASI ---
@@ -173,11 +211,9 @@
         ];
         
         const WARNING_TIME_SECONDS = 15 * 60; // 15 menit
-        const STORAGE_KEY_PREFIX = 'thawingTimerStatus_'; 
-        const STORAGE_INPUT_PREFIX = 'thawingTimerInput_';
 
         // --- VARIABEL GLOBAL ALARM AGRESIF ---
-        let activeIntervals = {}; 
+        let activeIntervals = {}; // Menyimpan interval tick LOKAL
         let audioCtx;
         let notificationPermission = Notification.permission;
         
@@ -187,7 +223,7 @@
         const WARNING_TITLE_PREFIX = '🚨 HABIS! - ';
         const FLASH_COLOR_CLASS = 'flash-alarm-red'; 
 
-        // --- UTILITY: FORMAT WAKTU ---
+        // Fungsi Audio & Alarm (Tidak diubah, karena alarm bersifat lokal pada setiap perangkat)
         function formatTime(totalSeconds) {
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -200,7 +236,6 @@
             return `${h}:${m}:${s}`;
         }
         
-        // --- FUNGSI AUDIO & ALARM AGRESIF ---
         function resumeAudioContext() {
              if (audioCtx && audioCtx.state === 'suspended') {
                  audioCtx.resume().catch(e => console.error("Failed to resume AudioContext:", e));
@@ -236,7 +271,6 @@
             }
         }
 
-        // Alarm berulang untuk Time-up dan Peringatan
         function playAlarm(times = 8) { 
             let count = 0;
             const interval = setInterval(() => {
@@ -248,31 +282,28 @@
             }, 500); 
         }
 
-        // Notifikasi Desktop (Popup & Suara Sistem)
         function sendNotification(itemName) {
             if (notificationPermission === 'granted') {
                 new Notification("⏰ WAKTU THAWING HABIS!", {
-                    body: `🚨 Segera ambil bahan: ${itemName}. Alarm ini berbunyi di background Android.`,
+                    body: `🚨 Segera ambil bahan: ${itemName}.`,
                     tag: 'thawing-alarm',
                     renotify: true, 
-                    requireInteraction: true // Notifikasi menetap di layar (sulit diabaikan)
+                    requireInteraction: true 
                 }).onclick = function() {
                     window.focus(); 
                     this.close();
-                    stopAggressiveAlarm(); // Hentikan alarm saat user klik notifikasi
+                    stopAggressiveAlarm(); 
                 };
             }
         }
 
-        // Vibration API (Hanya berfungsi jika dipicu oleh user interaction/klik notifikasi)
         function startVibrationAlert() {
             if ('vibrate' in navigator) {
-                const pattern = [1000, 500, 1000]; // Getar 1s, jeda 0.5s, Getar 1s
+                const pattern = [1000, 500, 1000]; 
                 navigator.vibrate(pattern);
             }
         }
 
-        // Flash Background
         function startFlashAlarm() {
             if (flashInterval) return;
             let isFlashing = false;
@@ -282,7 +313,6 @@
             }, 200);
         }
 
-        // Kedipan Judul Halaman
         function startTitleAlert(itemName) {
             if (titleInterval) return;
             let isAlertState = false;
@@ -294,7 +324,6 @@
             }, 800);
         }
 
-        // Hentikan Semua Alarm Agresif Global
         function stopAggressiveAlarm() {
             if (titleInterval) {
                 clearInterval(titleInterval);
@@ -306,21 +335,35 @@
             }
             document.title = originalTitle;
             document.body.classList.remove(FLASH_COLOR_CLASS);
-            // Catatan: Tidak ada clearInterval untuk playAlarm karena sifatnya non-looping.
         }
         
-        // --- FUNGSI UTAMA LOGIKA ---
+        // --- LOGIKA UTAMA (Sama, namun dipicu oleh Firebase) ---
         
-        function tick(itemId, endTimeMs) {
+        /**
+         * Fungsi tick sekarang dipicu oleh listener Firebase, bukan hanya tombol START.
+         * Ia menghentikan dirinya sendiri (cleartimeout) dan menjadwalkan yang baru.
+         */
+        function tick(itemId, endTimeMs, inputMinutes) {
             const timerCard = document.getElementById(`card-${itemId}`);
+            if (!timerCard) return; // Exit jika card belum ter-render (safety check)
+
             const display = document.getElementById(`display-${itemId}`);
             const alarmMessage = document.getElementById(`msg-${itemId}`);
             const itemName = timerCard.querySelector('h2').textContent;
             
+            clearTimeout(activeIntervals[itemId]);
+
             const now = Date.now();
             let duration = Math.floor((endTimeMs - now) / 1000); 
             
-            clearTimeout(activeIntervals[itemId]);
+            // Perbarui UI Kontrol
+            const inputTime = document.getElementById(`time-input-${itemId}`);
+            const startButton = document.getElementById(`start-btn-${itemId}`);
+            const resetButton = document.getElementById(`reset-btn-${itemId}`);
+            if (inputTime) inputTime.value = inputMinutes; // Sinkronkan input
+            if (inputTime) inputTime.readOnly = true;
+            if (startButton) startButton.style.display = 'none';
+            if (resetButton) resetButton.style.display = 'block';
 
             // 1. Update tampilan
             if (duration >= 0) {
@@ -346,10 +389,14 @@
                 playAlarm(1); 
             }
             
-            // 4. Kondisi Waktu Habis: (Logic utama notifikasi dan alarm terkuat)
+            // 4. Kondisi Waktu Habis: (Alarm & Hapus dari database)
             if (duration <= 0) {
+                // Hentikan interval lokal
+                clearTimeout(activeIntervals[itemId]);
                 delete activeIntervals[itemId];
-                localStorage.removeItem(STORAGE_KEY_PREFIX + itemId); 
+                
+                // Hapus entry dari Firebase (Hanya satu perangkat yang berhasil menghapus)
+                dbRef.child(itemId).remove().catch(e => console.log('Hapus item gagal, mungkin sudah dihapus perangkat lain.'));
                 
                 display.textContent = "WAKTU HABIS!";
                 timerCard.classList.remove('warning');
@@ -357,75 +404,84 @@
                 alarmMessage.textContent = `✅ SELESAI! Bahan ${itemName} butuh penanganan.`;
                 alarmMessage.style.display = 'block';
                 
-                // --- AKTIVASI ALARM AGRESIF DAN PERSISTENT ---
+                // --- AKTIVASI ALARM AGRESIF (Lokal di perangkat ini) ---
                 sendNotification(itemName);
                 startVibrationAlert(); 
                 startTitleAlert(itemName);
                 startFlashAlarm();
-                playAlarm(15); // Suara alarm lebih panjang
+                playAlarm(15); 
                 
-                // Reset UI kontrol
-                const inputTime = document.getElementById(`time-input-${itemId}`);
-                document.getElementById(`start-btn-${itemId}`).style.display = 'block';
-                document.getElementById(`reset-btn-${itemId}`).style.display = 'none';
-                inputTime.readOnly = false;
+                // UI akan direset oleh listener Firebase saat data dihapus
                 return; 
             }
             
-            // 5. Jadwalkan tick berikutnya
-            activeIntervals[itemId] = setTimeout(() => tick(itemId, endTimeMs), 1000);
+            // 5. Jadwalkan tick berikutnya (Lokal)
+            activeIntervals[itemId] = setTimeout(() => tick(itemId, endTimeMs, inputMinutes), 1000);
         }
 
-        // Fungsi utama untuk menjalankan countdown
+        // --- FUNGSI PUBLIK (Dipanggil oleh User) ---
+        
+        // FUNGSI INI MENGIRIM PERUBAHAN KE FIREBASE
         function startCountdown(itemId) {
             resumeAudioContext(); 
-            
-            // Minta Izin Notifikasi Pop-up 
             Notification.requestPermission().then(permission => {
                 notificationPermission = permission; 
             });
             
             const timerCard = document.getElementById(`card-${itemId}`);
             const inputTime = document.getElementById(`time-input-${itemId}`);
-            
-            if (activeIntervals[itemId]) {
-                const confirmRestart = confirm(`Timer untuk ${timerCard.querySelector('h2').textContent} sedang berjalan. Apakah Anda ingin memulai ulang?`);
-                if (!confirmRestart) return; 
-                resetTimer(itemId); // Reset bersih sebelum memulai
-            }
-
             const durationMinutes = parseInt(inputTime.value);
+
             if (isNaN(durationMinutes) || durationMinutes <= 0) {
                 alert(`Mohon masukkan waktu thawing yang valid.`);
                 return;
             }
             
-            // LOGIKA PENYIMPANAN STATE
             const durationMs = durationMinutes * 60 * 1000;
             const endTimeMs = Date.now() + durationMs; 
-            localStorage.setItem(STORAGE_KEY_PREFIX + itemId, endTimeMs);
-            localStorage.setItem(STORAGE_INPUT_PREFIX + itemId, durationMinutes); // Simpan input baru
             
-            // Perubahan UI
-            document.getElementById(`start-btn-${itemId}`).style.display = 'none';
-            document.getElementById(`reset-btn-${itemId}`).style.display = 'block';
-            inputTime.readOnly = true;
-            timerCard.classList.remove('alert', 'warning');
-            document.getElementById(`msg-${itemId}`).style.display = 'none';
-            document.getElementById(`display-${itemId}`).textContent = formatTime(durationMinutes * 60);
-
-            // Jalankan tick
-            tick(itemId, endTimeMs);
+            // 🚨 LOGIKA UTAMA: TULIS KE DATABASE 
+            dbRef.child(itemId).set({ 
+                endTime: endTimeMs, 
+                inputMinutes: durationMinutes 
+            })
+            .then(() => {
+                console.log(`Timer ${itemId} started and synced.`);
+            })
+            .catch(error => {
+                alert("Gagal memulai timer. Periksa koneksi atau aturan Firebase.");
+                console.error(error);
+            });
         }
 
-        // Fungsi reset
+        // FUNGSI INI MENGHAPUS DATA DARI FIREBASE
         function resetTimer(itemId) {
+            stopAggressiveAlarm(); 
+            
+            // 🚨 LOGIKA UTAMA: HAPUS DARI DATABASE
+            dbRef.child(itemId).remove()
+            .then(() => {
+                console.log(`Timer ${itemId} reset and synced.`);
+            })
+            .catch(error => {
+                alert("Gagal mereset timer. Periksa koneksi atau aturan Firebase.");
+                console.error(error);
+            });
+            
+            // UI akan direset secara lokal oleh listener Firebase
+            localResetUI(itemId);
+        }
+
+        // Mereset UI lokal berdasarkan item default
+        function localResetUI(itemId, inputMinutes = null) {
+            const item = THAWING_ITEMS.find(i => i.id === itemId);
+            if (!item) return;
+
+            // Jika inputMinutes tidak disediakan, ambil nilai default
+            const finalInput = inputMinutes !== null ? inputMinutes : item.defaultTimeMinutes;
+            
             clearTimeout(activeIntervals[itemId]);
             delete activeIntervals[itemId];
-            
-            localStorage.removeItem(STORAGE_KEY_PREFIX + itemId); 
-
-            const item = THAWING_ITEMS.find(i => i.id === itemId);
 
             const timerCard = document.getElementById(`card-${itemId}`);
             const inputTime = document.getElementById(`time-input-${itemId}`);
@@ -434,29 +490,21 @@
             const startButton = document.getElementById(`start-btn-${itemId}`);
             const resetButton = document.getElementById(`reset-btn-${itemId}`);
             
-            // Hentikan alarm global saat ada timer yang direset
-            stopAggressiveAlarm(); 
-
             if (!timerCard || !inputTime || !display) return; 
 
-            // Hapus kelas state & Tampilan
             timerCard.classList.remove('alert', 'warning');
             inputTime.readOnly = false;
             startButton.style.display = 'block';
             resetButton.style.display = 'none';
             alarmMessage.style.display = 'none';
 
-            // Ambil durasi input yang tersimpan atau default
-            const savedInput = localStorage.getItem(STORAGE_INPUT_PREFIX + itemId) || item.defaultTimeMinutes;
-            
-            inputTime.value = savedInput;
-            display.textContent = formatTime(savedInput * 60);
+            inputTime.value = finalInput;
+            display.textContent = formatTime(finalInput * 60);
 
             inputTime.focus();
         }
 
-
-        // Fungsi untuk membuat elemen HTML timer
+        // Fungsi untuk membuat elemen HTML timer (Dibiarkan sama)
         function createTimerCard(item) {
             const timerListContainer = document.getElementById('timer-list');
             
@@ -464,41 +512,24 @@
             card.className = 'timer-card';
             card.id = `card-${item.id}`;
             
-            const savedEndTime = localStorage.getItem(STORAGE_KEY_PREFIX + item.id);
-            const savedInput = localStorage.getItem(STORAGE_INPUT_PREFIX + item.id) || item.defaultTimeMinutes;
-            
-            let initialDisplayTime = formatTime(savedInput * 60);
-            let isRunning = false;
-
-            if (savedEndTime) {
-                const remainingMs = parseInt(savedEndTime) - Date.now();
-                if (remainingMs > 1000) { 
-                    initialDisplayTime = formatTime(Math.ceil(remainingMs / 1000));
-                    isRunning = true;
-                } else {
-                    localStorage.removeItem(STORAGE_KEY_PREFIX + item.id);
-                }
-            }
-            
             card.innerHTML = `
                 <h2>${item.name}</h2>
                 <div id="display-${item.id}" class="countdown-display">
-                    ${initialDisplayTime}
+                    ${formatTime(item.defaultTimeMinutes * 60)}
                 </div>
                 
-                <div id="msg-${item.id}" class="alarm-message"></div>
+                <div id="msg-${item.id}" class="alarm-message" style="display: none;"></div>
 
                 <div class="timer-controls">
                     <label for="time-input-${item.id}">Durasi (mnt):</label>
-                    <input type="number" id="time-input-${item.id}" value="${savedInput}" min="1" max="180" ${isRunning ? 'readonly' : ''}>
-                    <button id="start-btn-${item.id}" class="start-btn" style="display: ${isRunning ? 'none' : 'block'};">START</button>
-                    <button id="reset-btn-${item.id}" class="reset-btn" style="display: ${isRunning ? 'block' : 'none'};">RESET</button>
+                    <input type="number" id="time-input-${item.id}" value="${item.defaultTimeMinutes}" min="1" max="180">
+                    <button id="start-btn-${item.id}" class="start-btn">START</button>
+                    <button id="reset-btn-${item.id}" class="reset-btn" style="display: none;">RESET</button>
                 </div>
             `;
             
             timerListContainer.appendChild(card);
             
-            // Tambahkan Event Listener
             document.getElementById(`start-btn-${item.id}`).addEventListener('click', () => startCountdown(item.id));
             document.getElementById(`reset-btn-${item.id}`).addEventListener('click', () => resetTimer(item.id));
 
@@ -509,23 +540,58 @@
                     display.textContent = formatTime(minutes * 60);
                 }
             });
-
-            // Jalankan kembali tick jika ada status yang tersimpan
-            if (isRunning) {
-                // Gunakan setTimeout kecil untuk memastikan DOM dirender sempurna sebelum tick
-                setTimeout(() => {
-                    tick(item.id, parseInt(savedEndTime));
-                }, 50); 
-            }
+            
+            // Panggil reset lokal untuk memastikan UI sesuai default saat dimuat
+            localResetUI(item.id, item.defaultTimeMinutes);
         }
 
-
-        // Inisialisasi Aplikasi
+        // ===================================
+        // 🚨 LOGIKA SINKRONISASI REAL-TIME
+        // ===================================
+        
         document.addEventListener('DOMContentLoaded', () => {
+            // 1. Render semua kartu timer
             THAWING_ITEMS.forEach(item => {
                 createTimerCard(item);
             });
             notificationPermission = Notification.permission;
+            
+            // 2. Pasang Listener Real-time
+            // Listener ini akan dipicu setiap kali ada perubahan di node 'thawingTimers'
+            dbRef.on('value', (snapshot) => {
+                const timersData = snapshot.val() || {}; // Ambil data, atau objek kosong jika tidak ada
+
+                // Loop melalui semua item default
+                THAWING_ITEMS.forEach(item => {
+                    const itemId = item.id;
+                    const timerState = timersData[itemId];
+                    
+                    if (timerState && timerState.endTime) {
+                        // Timer sedang berjalan (Data ditemukan di Firebase)
+                        const endTime = timerState.endTime;
+                        const inputMinutes = timerState.inputMinutes || item.defaultTimeMinutes;
+                        
+                        // Periksa apakah timer sudah selesai (hanya untuk kasus ekstrem)
+                        if (endTime < Date.now()) {
+                            // Jika sudah berakhir, panggil tick untuk memicu alarm dan penghapusan
+                            tick(itemId, endTime, inputMinutes); 
+                        } else {
+                            // Panggil tick untuk memulai/melanjutkan countdown
+                            tick(itemId, endTime, inputMinutes);
+                        }
+                    } else {
+                        // Timer TIDAK berjalan (Data tidak ada di Firebase)
+                        
+                        // Hentikan interval lokal jika ada yang masih aktif
+                        clearTimeout(activeIntervals[itemId]);
+                        delete activeIntervals[itemId];
+
+                        // Reset tampilan UI ke status default/input terakhir
+                        // Gunakan default time dari config, karena input time tidak disimpan setelah reset
+                        localResetUI(itemId, item.defaultTimeMinutes); 
+                    }
+                });
+            });
         });
     </script>
 </body>
