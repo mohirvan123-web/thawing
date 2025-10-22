@@ -163,28 +163,15 @@
         // FIREBASE CONFIGURATION (WAJIB DIGANTI)
         // ===================================
         const firebaseConfig = {
-           // Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-import { getAnalytics } from "firebase/analytics";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyBtUlghTw806GuGuwOXGNgoqN6Rkcg0IMM",
+          apiKey: "AIzaSyBtUlghTw806GuGuwOXGNgoqN6Rkcg0IMM",
   authDomain: "thawing-ec583.firebaseapp.com",
+  databaseURL: "https://thawing-ec583-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "thawing-ec583",
-  storageBucket: "thawing-ec583.firebasestorage.app",
+  storageBucket: "thawing-ec583.firebasestorage.app"
   messagingSenderId: "1043079332713",
   appId: "1:1043079332713:web:6d289ad2b7c13a222bb3f8",
-  measurementId: "G-WLBFJ6V7QT"
+  measurementId: "G-WLBFJ6V7QT"            
 };
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const analytics = getAnalytics(app);
-        };
 
         // Initialize Firebase (PENTING: Hanya panggil sekali)
         try {
