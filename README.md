@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thawing Reminder - Alarm Agresif & Persistent (MLGJAK)</title>
+    <title>Thawing Reminder (MLGJAK)</title>
     
     <style>
         /* ==================== 
@@ -162,8 +162,8 @@
 </head>
 <body>
     <div class="main-container">
-        <h1>Timer Thawing Reminder 🧊 (SHARED)</h1>
-        <p>Status timer dibagikan dan disinkronkan secara real-time ke semua perangkat.</p>
+        <h1>Timer Thawing Reminder 🧊 (MLGJAK)</h1>
+        <p>Awas aja sampe lupa angkat yaaa.</p>
         
         <div class="timer-list" id="timer-list">
             </div>
