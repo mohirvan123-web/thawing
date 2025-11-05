@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thawing Reminder (MLGJAK)</title>
+    <title>Thawing Reminder - Alarm Agresif & Persistent (MLGJAK)</title>
     
     <style>
-        /* ==================== 
-           CSS: STYLING & RESPONSIVITAS
-           ==================== */
+        /* ... CSS SAMA DENGAN VERSI SEBELUMNYA ... */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4ff;
@@ -162,8 +160,8 @@
 </head>
 <body>
     <div class="main-container">
-        <h1>Timer Thawing Reminder 🧊 (MLGJAK)</h1>
-        <p>Awas aja sampe lupa angkat yaaa.</p>
+        <h1>Timer Thawing Reminder 🧊 (SHARED)</h1>
+        <p>Status timer dibagikan dan disinkronkan secara real-time ke semua perangkat.</p>
         
         <div class="timer-list" id="timer-list">
             </div>
@@ -212,7 +210,7 @@
         const WARNING_TIME_SECONDS = 15 * 60; // 15 menit
 
         // --- VARIABEL GLOBAL ALARM AGRESIF ---
-        let activeIntervals = {}; // Menyimpan interval tick LOKAL
+        let activeIntervals = {}; 
         let audioCtx;
         let notificationPermission = Notification.permission;
         
@@ -222,7 +220,7 @@
         const WARNING_TITLE_PREFIX = '🚨 HABIS! - ';
         const FLASH_COLOR_CLASS = 'flash-alarm-red'; 
 
-        // Fungsi Audio & Alarm
+        // Fungsi Audio & Alarm (Tidak diubah)
         function formatTime(totalSeconds) {
             const hours = Math.floor(totalSeconds / 3600);
             const minutes = Math.floor((totalSeconds % 3600) / 60);
@@ -272,9 +270,8 @@
 
         function playAlarm(times = 8) { 
             let count = 0;
-            // Interval 500ms adalah jeda antara beep
             const interval = setInterval(() => { 
-                playBeep(440, 400); // Beep 400ms
+                playBeep(440, 400); 
                 count++;
                 if (count >= times) {
                     clearInterval(interval);
@@ -304,8 +301,8 @@
                 new Notification("⏳ WAKTU THAWING MENDEKAT!", {
                     body: `Peringatan: ${itemName} tersisa kurang dari 15 menit.`,
                     tag: 'thawing-warning',
-                    renotify: false, // Notifikasi sekali saja
-                    requireInteraction: false // Boleh ditutup oleh sistem
+                    renotify: false, 
+                    requireInteraction: false 
                 }).onclick = function() {
                     window.focus(); 
                     this.close();
@@ -352,7 +349,6 @@
             document.title = originalTitle;
             document.body.classList.remove(FLASH_COLOR_CLASS);
             
-            // Hentikan getaran
             if ('vibrate' in navigator) {
                 navigator.vibrate(0);
             }
@@ -385,10 +381,13 @@
             // 1. Update tampilan
             if (duration >= 0) {
                  display.textContent = formatTime(duration);
+            } else {
+                 // **PERBAIKAN:** Jika durasi negatif (habis), tampilkan 00:00:00 sebentar sebelum masuk ke blok waktu habis.
+                 display.textContent = formatTime(0);
             }
            
             // 2. Transisi ke mode WARNING (15 Menit)
-            if (duration <= WARNING_TIME_SECONDS && duration > 0) {
+            if (duration <= WARNING_TIME_SECONDS && duration > 0) { // Pastikan duration > 0
                 if (!timerCard.classList.contains('warning')) {
                     // Masuk ke status WARNING untuk pertama kali
                     timerCard.classList.add('warning');
@@ -397,7 +396,6 @@
                     alarmMessage.textContent = `🔔 PERINGATAN! ${itemName} tersisa ${remainingMinutes} menit.`;
                     alarmMessage.style.display = 'block';
                     
-                    // 🚨 PENGEMBANGAN: KIRIM NOTIFIKASI BUBBLE 15 MENIT
                     sendWarningNotification(itemName);
                 }
             } else if (duration > WARNING_TIME_SECONDS) {
@@ -411,11 +409,13 @@
                 playAlarm(3); 
             }
             
-            // 4. Kondisi Waktu Habis: (Alarm & Hapus dari database)
+            // 4. Kondisi Waktu Habis: 🚨 HANYA BERJALAN JIKA DURASI KURANG DARI ATAU SAMA DENGAN 0 🚨
             if (duration <= 0) {
+                // Hentikan interval lokal
                 clearTimeout(activeIntervals[itemId]);
                 delete activeIntervals[itemId];
                 
+                // Hapus entry dari Firebase (Ini yang memicu reset di semua perangkat)
                 dbRef.child(itemId).remove().catch(e => console.log('Hapus item gagal, mungkin sudah dihapus perangkat lain.'));
                 
                 display.textContent = "WAKTU HABIS!";
@@ -424,21 +424,22 @@
                 alarmMessage.textContent = `✅ SELESAI! Bahan ${itemName} butuh penanganan.`;
                 alarmMessage.style.display = 'block';
                 
-                // --- AKTIVASI ALARM AGRESIF (Lokal di perangkat ini) ---
-                sendNotification(itemName); // Notifikasi waktu habis
+                // --- AKTIVASI ALARM AGRESIF (Lokal) ---
+                sendNotification(itemName); 
                 startVibrationAlert(); 
                 startTitleAlert(itemName);
                 startFlashAlarm();
                 playAlarm(15); 
                 
-                return;
+                return; // Hentikan tick di sini
             }
             
             // 5. Jadwalkan tick berikutnya (Lokal)
+            // Hanya jadwalkan jika duration masih positif
             activeIntervals[itemId] = setTimeout(() => tick(itemId, endTimeMs, inputMinutes), 1000);
         }
 
-        // --- FUNGSI PUBLIK (Dipanggil oleh User) ---
+        // --- FUNGSI PUBLIK (Tidak diubah) ---
         
         function startCountdown(itemId) {
             resumeAudioContext(); 
@@ -485,7 +486,7 @@
             localResetUI(itemId); 
         }
 
-        // Mereset UI lokal berdasarkan item default
+        // Mereset UI lokal berdasarkan item default (Tidak diubah)
         function localResetUI(itemId, inputMinutes = null) {
             const item = THAWING_ITEMS.find(i => i.id === itemId);
             if (!item) return;
@@ -516,7 +517,7 @@
             inputTime.focus();
         }
 
-        // Fungsi untuk membuat elemen HTML timer
+        // Fungsi untuk membuat elemen HTML timer (Tidak diubah)
         function createTimerCard(item) {
             const timerListContainer = document.getElementById('timer-list');
             
@@ -557,7 +558,7 @@
         }
 
         // ===================================
-        // LOGIKA SINKRONISASI REAL-TIME
+        // LOGIKA SINKRONISASI REAL-TIME (Tidak diubah)
         // ===================================
         
         document.addEventListener('DOMContentLoaded', () => {
@@ -577,12 +578,10 @@
                         const endTime = timerState.endTime;
                         const inputMinutes = timerState.inputMinutes || item.defaultTimeMinutes;
                         
-                        if (endTime < Date.now()) {
-                            tick(itemId, endTime, inputMinutes); 
-                        } else {
-                            tick(itemId, endTime, inputMinutes);
-                        }
+                        // Periksa: Jika data ada di Firebase, panggil tick (baik masih berjalan atau sudah habis)
+                        tick(itemId, endTime, inputMinutes);
                     } else {
+                        // Jika data tidak ada di Firebase, pastikan reset lokal (cleanup)
                         clearTimeout(activeIntervals[itemId]);
                         delete activeIntervals[itemId];
 
