@@ -38,7 +38,7 @@
     <div class="link-container">
         <h1>Halo! Ini Link Saya</h1>
         <div class="link-item">
-            <a href="https://mohirvan123-web.github.io/THAWING.MLGJAK/"_blank">
+            href="https://mohirvan123-web.github.io/THAWING.MLGJAK/"
         </div>
         
     </div>
